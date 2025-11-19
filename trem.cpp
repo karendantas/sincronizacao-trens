@@ -37,7 +37,8 @@ void Trem::run()
             if (enable)
             {
                 emit updateGUI(id,x,y);
-                if (y == 120 && x <290)
+
+                if (y == 120 && x < 290)
                     x+=10;
                 else if (x == 290 && y < 220)
                     y+=10;
@@ -49,21 +50,105 @@ void Trem::run()
             break;
         case 2:
             if (enable)
+            {
+                emit updateGUI(id,x,y);
+                if (y == 120 && x > 290)
+                    x -= 10;
+                else if (x == 290 && y < 220)
+                    y += 10;
+                else if (x < 430 && y == 220)
+                    x+=10;
+                else
+                    y-=10;
+            }
+            break;
+        case 3:
+            if (enable)
 
-                {
-                    emit updateGUI(id,x,y);
+            {
+                emit updateGUI(id,x,y);
 
-                    if (y == 160 && x < 320)          // esquerda -> direita
-                        x += 10;
-                    else if (x == 320 && y < 260)     // cima -> baixo
-                        y += 10;
-                    else if (y == 260 && x > 150)     // direita -> esquerda
-                        x -= 10;
-                    else                              // baixo -> cima
-                        y -= 10;
-                }
+                if (y == 120 && x <570)
+                    x+=10;
+                else if (x == 570 && y < 220)
+                    y+=10;
+                else if (x > 430 && y == 220)
+                    x-=10;
+                else
+                    y-=10;
+            }
 
             break;
+
+        case 4:
+            if (enable)
+
+            {
+                emit updateGUI(id,x,y);
+
+                if (y == 220 && x > 220)
+                    x-=10;
+                else if (x == 220 && y < 320)
+                    y+=10;
+                else if (x < 500 && y == 320)
+                    x+=10;
+                else
+                    y-=10;
+            }
+
+            break;
+
+        case 5:
+            if (enable)
+
+            {
+                emit updateGUI(id,x,y);
+
+                if (y == 220 && x > 220)
+                    x-=10;
+                else if (x == 220 && y < 320)
+                    y+=10;
+                else if (x < 500 && y == 320)
+                    x+=10;
+                else
+                    y-=10;
+            }
+
+            break;
+        case 6:
+            if (enable)
+
+            {
+                emit updateGUI(id,x,y);
+                if (y == 320 && x < 360)
+                    x+=10;
+                else if (x == 360 && y < 420)
+                    y+=10;
+                else if (y == 420 && x > 160)
+                    x-=10;
+                else
+                    y-=10;
+            }
+
+            break;
+
+        case 7:
+            if (enable)
+
+            {
+                emit updateGUI(id,x,y);
+                if (y == 320 && x < 560)
+                    x+=10;
+                else if (x == 560 && y < 420)
+                    y+=10;
+                else if (y == 420 && x > 360)
+                    x-=10;
+                else
+                    y-=10;
+            }
+
+            break;
+
         default:
             break;
         }
