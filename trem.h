@@ -34,6 +34,9 @@ public:
     static QSemaphore regiaoCritica46;
     static QSemaphore regiaoCritica34;
 
+    static QSemaphore regiaoCritica54;
+    static QSemaphore regiaoCritica456;
+    static QSemaphore filaTrem45;
 
 
 signals:

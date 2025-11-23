@@ -77,7 +77,7 @@ public:
 "border: 2px solid black;"));
         labelTrem04 = new QLabel(centralWidget);
         labelTrem04->setObjectName(QString::fromUtf8("labelTrem04"));
-        labelTrem04->setGeometry(QRect(500, 260, 20, 20));
+        labelTrem04->setGeometry(QRect(220, 260, 20, 20));
         labelTrem04->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrilho04 = new QLabel(centralWidget);
         labelTrilho04->setObjectName(QString::fromUtf8("labelTrilho04"));

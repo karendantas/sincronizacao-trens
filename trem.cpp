@@ -9,6 +9,9 @@ QSemaphore Trem::regiaoCritica56(1);
 
 QSemaphore Trem::regiaoCritica12245(1);
 QSemaphore Trem::regiaoCritica145(1);
+QSemaphore Trem::regiaoCritica456(1);
+QSemaphore Trem::regiaoCritica54(1);
+
 
 Trem::Trem(int id, int x, int y)
 {
@@ -223,6 +226,17 @@ void Trem::movimentarTrem4()
         regiaoCritica34.release();
     }
 
+    // REGIAO CRITICA 54
+    if (x == 320 && y == 320) {          // MESMO ponto de entrada
+        if (regiaoCritica54.available() == 0)
+            return;
+        else
+            regiaoCritica54.acquire();
+    }
+
+    if (x == 350 && y == 320) {          // Ponto de saída (ajustar ao caminho dele)
+        regiaoCritica54.release();
+    }
     // MOVIMENTO PADRÃO
     if (y == 220 && x > 220)
         x -= 10;
@@ -257,6 +271,18 @@ void Trem::movimentarTrem5()
     }
     if (x == 340 && y == 420) {
         regiaoCritica56.release();
+    }
+
+    // REGIAO CRITICA 54
+    if (x == 320 && y == 320) {          // Ponto de entrada
+        if (regiaoCritica54.available() == 0)
+            return;
+        else
+            regiaoCritica54.acquire();
+    }
+
+    if (x == 360 && y == 320) {          // Ponto de saída
+        regiaoCritica54.release();
     }
 
     // MOVIMENTO PADRÃO
