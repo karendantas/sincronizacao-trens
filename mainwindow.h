@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "qlabel.h"
 #include "trem.h"
+#include "controllersocketmain.h"
 #include <QMainWindow>
 
 using namespace std;
@@ -23,12 +25,18 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
+
+    ControllerSocketMain *tcpServer;
+
     Trem *trem1;
     Trem *trem2;
     Trem *trem3;
     Trem *trem4;
     Trem *trem5;
     Trem *trem6;
+
+    Trem *getTrem(int id);
+    QLabel *getLabelTrem(int id);
 };
 
 #endif // MAINWINDOW_H
