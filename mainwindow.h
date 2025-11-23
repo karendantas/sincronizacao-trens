@@ -29,7 +29,6 @@ private:
     Trem *trem4;
     Trem *trem5;
     Trem *trem6;
-    Trem *trem7;
 };
 
 #endif // MAINWINDOW_H

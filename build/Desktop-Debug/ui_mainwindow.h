@@ -32,11 +32,10 @@ public:
     QLabel *labelTrilho03;
     QLabel *labelTrem04;
     QLabel *labelTrilho04;
-    QLabel *labelTrem06;
+    QLabel *labelTrem05;
     QLabel *labelTrilho05;
     QLabel *labelTrilho06;
-    QLabel *labelTrem07;
-    QLabel *labelTrem05;
+    QLabel *labelTrem06;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -56,8 +55,8 @@ public:
 "border: 2px solid black;"));
         labelTrem01 = new QLabel(centralWidget);
         labelTrem01->setObjectName(QString::fromUtf8("labelTrem01"));
-        labelTrem01->setGeometry(QRect(180, 120, 20, 20));
-        labelTrem01->setStyleSheet(QString::fromUtf8("background-color: red"));
+        labelTrem01->setGeometry(QRect(250, 120, 20, 20));
+        labelTrem01->setStyleSheet(QString::fromUtf8("background-color: red;"));
         labelTrilho02 = new QLabel(centralWidget);
         labelTrilho02->setObjectName(QString::fromUtf8("labelTrilho02"));
         labelTrilho02->setGeometry(QRect(300, 130, 140, 100));
@@ -65,11 +64,11 @@ public:
 "border: 2px solid black;"));
         labelTrem02 = new QLabel(centralWidget);
         labelTrem02->setObjectName(QString::fromUtf8("labelTrem02"));
-        labelTrem02->setGeometry(QRect(320, 120, 20, 20));
+        labelTrem02->setGeometry(QRect(330, 120, 20, 20));
         labelTrem02->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrem03 = new QLabel(centralWidget);
         labelTrem03->setObjectName(QString::fromUtf8("labelTrem03"));
-        labelTrem03->setGeometry(QRect(460, 120, 20, 20));
+        labelTrem03->setGeometry(QRect(540, 220, 20, 20));
         labelTrem03->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrilho03 = new QLabel(centralWidget);
         labelTrilho03->setObjectName(QString::fromUtf8("labelTrilho03"));
@@ -78,17 +77,17 @@ public:
 "border: 2px solid black;"));
         labelTrem04 = new QLabel(centralWidget);
         labelTrem04->setObjectName(QString::fromUtf8("labelTrem04"));
-        labelTrem04->setGeometry(QRect(220, 270, 20, 20));
+        labelTrem04->setGeometry(QRect(500, 260, 20, 20));
         labelTrem04->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrilho04 = new QLabel(centralWidget);
         labelTrilho04->setObjectName(QString::fromUtf8("labelTrilho04"));
         labelTrilho04->setGeometry(QRect(230, 230, 280, 100));
         labelTrilho04->setStyleSheet(QString::fromUtf8("background-color: yellow;\n"
 "border: 2px solid black;"));
-        labelTrem06 = new QLabel(centralWidget);
-        labelTrem06->setObjectName(QString::fromUtf8("labelTrem06"));
-        labelTrem06->setGeometry(QRect(260, 420, 20, 20));
-        labelTrem06->setStyleSheet(QString::fromUtf8("background-color: red"));
+        labelTrem05 = new QLabel(centralWidget);
+        labelTrem05->setObjectName(QString::fromUtf8("labelTrem05"));
+        labelTrem05->setGeometry(QRect(160, 320, 20, 20));
+        labelTrem05->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrilho05 = new QLabel(centralWidget);
         labelTrilho05->setObjectName(QString::fromUtf8("labelTrilho05"));
         labelTrilho05->setGeometry(QRect(170, 330, 200, 100));
@@ -101,14 +100,10 @@ public:
         labelTrilho06->setAutoFillBackground(false);
         labelTrilho06->setStyleSheet(QString::fromUtf8("background-color: yellow;\n"
 "border: 2px solid black;"));
-        labelTrem07 = new QLabel(centralWidget);
-        labelTrem07->setObjectName(QString::fromUtf8("labelTrem07"));
-        labelTrem07->setGeometry(QRect(460, 420, 20, 20));
-        labelTrem07->setStyleSheet(QString::fromUtf8("background-color: red"));
-        labelTrem05 = new QLabel(centralWidget);
-        labelTrem05->setObjectName(QString::fromUtf8("labelTrem05"));
-        labelTrem05->setGeometry(QRect(500, 270, 20, 20));
-        labelTrem05->setStyleSheet(QString::fromUtf8("background-color: red"));
+        labelTrem06 = new QLabel(centralWidget);
+        labelTrem06->setObjectName(QString::fromUtf8("labelTrem06"));
+        labelTrem06->setGeometry(QRect(460, 420, 20, 20));
+        labelTrem06->setStyleSheet(QString::fromUtf8("background-color: red"));
         MainWindow->setCentralWidget(centralWidget);
         labelTrilho01->raise();
         labelTrilho02->raise();
@@ -120,9 +115,8 @@ public:
         labelTrem02->raise();
         labelTrem03->raise();
         labelTrem04->raise();
-        labelTrem06->raise();
-        labelTrem07->raise();
         labelTrem05->raise();
+        labelTrem06->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 728, 20));
@@ -133,6 +127,8 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
+#if QT_CONFIG(shortcut)
+#endif // QT_CONFIG(shortcut)
 
         retranslateUi(MainWindow);
 
@@ -150,11 +146,10 @@ public:
         labelTrilho03->setText(QString());
         labelTrem04->setText(QString());
         labelTrilho04->setText(QString());
-        labelTrem06->setText(QString());
+        labelTrem05->setText(QString());
         labelTrilho05->setText(QString());
         labelTrilho06->setText(QString());
-        labelTrem07->setText(QString());
-        labelTrem05->setText(QString());
+        labelTrem06->setText(QString());
     } // retranslateUi
 
 };
