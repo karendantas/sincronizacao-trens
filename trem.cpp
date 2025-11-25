@@ -1,35 +1,46 @@
 #include "trem.h"
+
+// ============================================================
+// INICIALIZAÇÃO DOS SEMÁFOROS ESTÁTICOS
+// ============================================================
 QSemaphore Trem::regiaoCritica12(1);
 QSemaphore Trem::regiaoCritica23(1);
 QSemaphore Trem::regiaoCritica34(1);
-
 QSemaphore Trem::regiaoCritica45(1);
 QSemaphore Trem::regiaoCritica46(1);
 QSemaphore Trem::regiaoCritica56(1);
-
 QSemaphore Trem::regiaoCritica12245(1);
 QSemaphore Trem::regiaoCritica145(1);
 QSemaphore Trem::regiaoCritica456(1);
 QSemaphore Trem::regiaoCritica54(1);
+QSemaphore Trem::regiaoCritica234(1);
+QSemaphore Trem::regiaoCritica43(1);
+QSemaphore Trem::regiaoCritica24(1);
+QSemaphore Trem::regiaoCritica21(1);
+QSemaphore Trem::regiaoCritica42(1);
+QSemaphore Trem::regiaoCritica14(1);
 
-
+// ============================================================
+// CONSTRUTOR E DESTRUTOR
+// ============================================================
 Trem::Trem(int id, int x, int y)
+    : id(id), x(x), y(y), velocidade(250), enable(true)
 {
-    this->id = id;
-    this->x = x;
-    this->y = y;
-    velocidade = 250;
-    enable = true;
 }
 
 Trem::~Trem()
 {
-    threadTrem.join();
+    if (threadTrem.joinable()) {
+        threadTrem.join();
+    }
 }
 
+// ============================================================
+// MÉTODOS PÚBLICOS
+// ============================================================
 void Trem::setVelocidade(int velocidade)
 {
-    this->velocidade = velocidade;
+    this->velocidade = std::max(1, velocidade); // Evita velocidade <= 0
 }
 
 void Trem::setEnable(bool enable)
@@ -39,302 +50,380 @@ void Trem::setEnable(bool enable)
 
 void Trem::start()
 {
-    threadTrem = std::thread(&Trem::run,this);
+    if (!threadTrem.joinable()) {
+        threadTrem = std::thread(&Trem::run, this);
+    }
 }
 
+// ============================================================
+// FUNÇÕES AUXILIARES PARA REGIÕES CRÍTICAS
+// ============================================================
+inline bool Trem::tentarEntrarRegiao(QSemaphore& semaforo)
+{
+    return semaforo.tryAcquire();
+}
+
+inline void Trem::entrarRegiao(QSemaphore& semaforo)
+{
+    semaforo.acquire();
+}
+
+inline void Trem::sairRegiao(QSemaphore& semaforo)
+{
+    semaforo.release();
+}
+
+inline bool Trem::regiaoDisponivel(QSemaphore& semaforo)
+{
+    return semaforo.available() > 0;
+}
+
+// ============================================================
+// MOVIMENTAÇÃO DO TREM 1
+// ============================================================
 void Trem::movimentarTrem1()
 {
-    // REGIAO CRITICA 12
+    // Região Crítica 12
     if (x == 270 && y == 120) {
-        regiaoCritica12.acquire();
+        entrarRegiao(regiaoCritica12);
         x += 10;
+        return;
     }
-    else if (x == 280 && y == 120) {
+    if (x == 280 && y == 120) {
         x += 10;
+        return;
     }
-    else if (x == 290 && y == 140) {
+    if (x == 290 && y == 140) {
         y += 10;
-        regiaoCritica12.release();
+        sairRegiao(regiaoCritica12);
+        return;
     }
 
-    // REGIAO CRITICA 1245
+    // Região Crítica 21
+    if (x == 290 && y == 180) {
+        if (!tentarEntrarRegiao(regiaoCritica21)) return;
+    }
+    if (x == 290 && y == 220) {
+        sairRegiao(regiaoCritica21);
+    }
+
+    // Região Crítica 42
     if (x == 290 && y == 200) {
-        regiaoCritica12245.acquire();
-        y += 10;
+        if (!tentarEntrarRegiao(regiaoCritica42)) return;
     }
-    else if (x == 290 && y == 210) {
-        y += 10;
-    }
-    else if (x == 270 && y == 220) {
-        x -= 10;
-        regiaoCritica12245.release();
+    if (x == 270 && y == 220) {
+        sairRegiao(regiaoCritica42);
     }
 
-    // REGIAO CRITICA 145
-    if (x == 220 && y == 200) {
-        if (!regiaoCritica145.tryAcquire()) {
-            return;
-        }
+    // Região Crítica 14
+    if (x == 240 && y == 220) {
+        if (!tentarEntrarRegiao(regiaoCritica14)) return;
     }
     if (x == 200 && y == 220) {
-        regiaoCritica145.release();
+        sairRegiao(regiaoCritica14);
     }
 
-    // MOVIMENTO PADRÃO
-    if (y == 120 && x < 290)
+    // Movimento padrão
+    if (y == 120 && x < 290) {
         x += 10;
-    else if (x == 290 && y < 220)
+    } else if (x == 290 && y < 220) {
         y += 10;
-    else if (x > 150 && y == 220)
+    } else if (x > 150 && y == 220) {
         x -= 10;
-    else
+    } else {
         y -= 10;
+    }
 }
 
+// ============================================================
+// MOVIMENTAÇÃO DO TREM 2
+// ============================================================
 void Trem::movimentarTrem2()
 {
-    // REGIAO CRITICA 12
+    // Região Crítica 12
     if (x == 310 && y == 120) {
-        regiaoCritica12.acquire();
+        entrarRegiao(regiaoCritica12);
         x -= 10;
+        return;
     }
-    else if (x == 300 && y == 120) {
+    if (x == 300 && y == 120) {
         x -= 10;
+        return;
     }
-    else if (x == 290 && y == 140) {
+    if (x == 290 && y == 140) {
         y += 10;
-        regiaoCritica12.release();
+        sairRegiao(regiaoCritica12);
+        return;
     }
 
-    // REGIAO CRITICA 1245
+    // Região Crítica 21
+    if (x == 290 && y == 180) {
+        if (!tentarEntrarRegiao(regiaoCritica21)) return;
+    }
+    if (x == 290 && y == 220) {
+        sairRegiao(regiaoCritica21);
+    }
+
+    // Região Crítica 42
     if (x == 290 && y == 200) {
-        regiaoCritica12245.acquire();
-        y += 10;
+        if (!tentarEntrarRegiao(regiaoCritica42)) return;
     }
-    else if (x == 290 && y == 210) {
-        y += 10;
-    }
-    else if (x == 310 && y == 220) {
-        x += 10;
-        regiaoCritica12245.release();
+    if (x == 430 && y == 200) {
+        sairRegiao(regiaoCritica42);
     }
 
-    // REGIAO CRITICA 23
-    if (x == 430 && y == 120) {
-        if (!regiaoCritica23.tryAcquire())
-            return;
-    }
+    // Região Crítica 23
     if (x == 430 && y == 140) {
-        regiaoCritica23.release();
+        if (!regiaoDisponivel(regiaoCritica23)) return;
+    }
+    if (x == 430 && y == 120) {
+        entrarRegiao(regiaoCritica23);
+    }
+    if (x == 410 && y == 120) {
+        sairRegiao(regiaoCritica23);
     }
 
-    // MOVIMENTO PADRÃO
-    if (y == 120 && x > 290)
+    // Região Crítica 234
+    if (x == 410 && y == 220) {
+        if (!tentarEntrarRegiao(regiaoCritica234)) return;
+    }
+    if (x == 430 && y == 200) {
+        sairRegiao(regiaoCritica234);
+    }
+
+    // Movimento padrão
+    if (y == 120 && x > 290) {
         x -= 10;
-    else if (x == 290 && y < 220)
+    } else if (x == 290 && y < 220) {
         y += 10;
-    else if (x < 430 && y == 220)
+    } else if (x < 430 && y == 220) {
         x += 10;
-    else
+    } else {
         y -= 10;
+    }
 }
 
+// ============================================================
+// MOVIMENTAÇÃO DO TREM 3
+// ============================================================
 void Trem::movimentarTrem3()
 {
-    // REGIAO CRITICA 23
+    // Região Crítica 23
+    if (x == 430 && y == 140) {
+        if (!regiaoDisponivel(regiaoCritica23)) return;
+    }
     if (x == 430 && y == 120) {
-        if (!regiaoCritica23.tryAcquire())
-            return;
+        entrarRegiao(regiaoCritica23);
     }
     if (x == 450 && y == 120) {
-        regiaoCritica23.release();
+        sairRegiao(regiaoCritica23);
     }
 
-    // REGIAO CRITICA 34 - Trem 3 pausa em (520, 220) e sai em (480, 220)
+    // Região Crítica 34
     if (x == 520 && y == 220) {
-        regiaoCritica34.acquire(); // Bloqueia até conseguir entrar
+        entrarRegiao(regiaoCritica34);
     }
-    // Saída da região crítica 34
     if (x == 480 && y == 220) {
-        regiaoCritica34.release();
+        sairRegiao(regiaoCritica34);
     }
 
-    // MOVIMENTO PADRÃO
-    if (y == 120 && x < 570)
+    // Região Crítica 234
+    if (x == 450 && y == 220) {
+        if (!tentarEntrarRegiao(regiaoCritica234)) return;
+    }
+    if (x == 430 && y == 200) {
+        sairRegiao(regiaoCritica234);
+    }
+
+    // Região Crítica 43
+    if (x == 470 && y == 220) {
+        if (!tentarEntrarRegiao(regiaoCritica43)) return;
+    }
+    if (x == 430 && y == 220) {
+        sairRegiao(regiaoCritica43);
+    }
+
+    // Movimento padrão
+    if (y == 120 && x < 570) {
         x += 10;
-    else if (x == 570 && y < 220)
+    } else if (x == 570 && y < 220) {
         y += 10;
-    else if (x > 430 && y == 220)
+    } else if (x > 430 && y == 220) {
         x -= 10;
-    else
+    } else {
         y -= 10;
+    }
 }
 
+// ============================================================
+// MOVIMENTAÇÃO DO TREM 4
+// ============================================================
 void Trem::movimentarTrem4()
 {
-    // REGIAO CRITICA 1245
-    if (x == 310 && y == 220) {
-        regiaoCritica12245.acquire();
-        x -= 10;
+    // Região Crítica 42
+    if (x == 450 && y == 220) {
+        if (!tentarEntrarRegiao(regiaoCritica42)) return;
     }
-    else if (x == 300 && y == 220) {
-        x -= 10;
-    }
-    else if (x == 270 && y == 220) {
-        x -= 10;
-        regiaoCritica12245.release();
+    if (x == 270 && y == 220) {
+        sairRegiao(regiaoCritica42);
     }
 
-    // REGIAO CRITICA 145
+    // Região Crítica 14
     if (x == 240 && y == 220) {
-        if (!regiaoCritica145.tryAcquire()) {
-            return;
-        }
+        if (!tentarEntrarRegiao(regiaoCritica14)) return;
     }
     if (x == 220 && y == 240) {
-        regiaoCritica145.release();
+        sairRegiao(regiaoCritica14);
     }
 
-    // REGIAO CRITICA 46
+    // Região Crítica 46
     if (x == 480 && y == 320) {
-        if (regiaoCritica46.available() == 0)
-            return;
-        else
-            regiaoCritica46.acquire();
+        if (!regiaoDisponivel(regiaoCritica46)) return;
+        entrarRegiao(regiaoCritica46);
     }
     if (x == 500 && y == 300) {
-        regiaoCritica46.release();
+        sairRegiao(regiaoCritica46);
     }
 
-    // REGIAO CRITICA 45 - Trem 4 pausa em (220, 300) e sai em (240, 320)
+    // Região Crítica 45
     if (x == 220 && y == 300) {
-        if (!regiaoCritica45.tryAcquire()) {
-            return; // Pausa aqui se não conseguir
-        }
+        if (!tentarEntrarRegiao(regiaoCritica45)) return;
     }
-    // Saída da região crítica 45
     if (x == 240 && y == 320) {
-        regiaoCritica45.release();
+        sairRegiao(regiaoCritica45);
     }
 
-    // REGIAO CRITICA 34 - Trem 4 pausa em (500, 240) e sai em (480, 220)
+    // Região Crítica 34
     if (x == 500 && y == 240) {
-        regiaoCritica34.acquire(); // Bloqueia até conseguir entrar
+        entrarRegiao(regiaoCritica34);
     }
-    // Saída da região crítica 34
     if (x == 480 && y == 220) {
-        regiaoCritica34.release();
+        sairRegiao(regiaoCritica34);
     }
 
-    // REGIAO CRITICA 54
-    if (x == 320 && y == 320) {          // MESMO ponto de entrada
-        if (regiaoCritica54.available() == 0)
-            return;
-        else
-            regiaoCritica54.acquire();
+    // Região Crítica 43
+    if (x == 470 && y == 220) {
+        if (!tentarEntrarRegiao(regiaoCritica43)) return;
+    }
+    if (x == 430 && y == 220) {
+        sairRegiao(regiaoCritica43);
     }
 
-    if (x == 350 && y == 320) {          // Ponto de saída (ajustar ao caminho dele)
-        regiaoCritica54.release();
+    // Região Crítica 54
+    if (x == 320 && y == 320) {
+        if (!regiaoDisponivel(regiaoCritica54)) return;
+        entrarRegiao(regiaoCritica54);
     }
-    // MOVIMENTO PADRÃO
-    if (y == 220 && x > 220)
-        x -= 10;
-    else if (x == 220 && y < 320)
-        y += 10;
-    else if (x < 500 && y == 320)
-        x += 10;
-    else
-        y -= 10;
-}
-
-void Trem::movimentarTrem5()
-{
-    // REGIAO CRITICA 45 - Trem 5 pausa em (200, 320) e sai em (240, 320)
-    if (x == 200 && y == 320) {
-        if (!regiaoCritica45.tryAcquire()) {
-            return; // Pausa aqui se não conseguir
-        }
-    }
-    // Saída da região crítica 45
-    if (x == 240 && y == 320) {
-        regiaoCritica45.release();
+    if (x == 350 && y == 320) {
+        sairRegiao(regiaoCritica54);
     }
 
-    // REGIAO CRITICA 56
+    // Região Crítica 56
     if (x == 340 && y == 320) {
-        if (regiaoCritica56.available() == 0)
-            return;
+        if (!regiaoDisponivel(regiaoCritica56)) return;
     }
     if (x == 360 && y == 320) {
-        regiaoCritica56.acquire();
-    }
-    if (x == 340 && y == 420) {
-        regiaoCritica56.release();
-    }
-
-    // REGIAO CRITICA 54
-    if (x == 320 && y == 320) {          // Ponto de entrada
-        if (regiaoCritica54.available() == 0)
-            return;
-        else
-            regiaoCritica54.acquire();
-    }
-
-    if (x == 360 && y == 320) {          // Ponto de saída
-        regiaoCritica54.release();
-    }
-
-    // MOVIMENTO PADRÃO
-    if (y == 320 && x < 360)
-        x += 10;
-    else if (x == 360 && y < 420)
-        y += 10;
-    else if (y == 420 && x > 160)
-        x -= 10;
-    else
-        y -= 10;
-}
-
-void Trem::movimentarTrem6()
-{
-    // REGIAO CRITICA 56
-    if (x == 380 && y == 420) {
-        if (regiaoCritica56.available() == 0)
-            return;
-        else
-            regiaoCritica56.acquire();
+        entrarRegiao(regiaoCritica56);
     }
     if (x == 380 && y == 320) {
-        regiaoCritica56.release();
+        sairRegiao(regiaoCritica56);
     }
 
-    // REGIAO CRITICA 46
-    if (x == 480 && y == 320) {
-        if (regiaoCritica46.available() == 0)
-            return;
-        else
-            regiaoCritica46.acquire();
-    }
-    if (x == 520 && y == 320) {
-        regiaoCritica46.release();
-    }
-
-    // MOVIMENTO PADRÃO
-    if (y == 320 && x < 560)
-        x += 10;
-    else if (x == 560 && y < 420)
-        y += 10;
-    else if (y == 420 && x > 360)
+    // Movimento padrão
+    if (y == 220 && x > 220) {
         x -= 10;
-    else
+    } else if (x == 220 && y < 320) {
+        y += 10;
+    } else if (x < 500 && y == 320) {
+        x += 10;
+    } else {
         y -= 10;
+    }
 }
 
 // ============================================================
-// FUNÇÃO RUN REFATORADA
+// MOVIMENTAÇÃO DO TREM 5
 // ============================================================
+void Trem::movimentarTrem5()
+{
+    // Região Crítica 45
+    if (x == 200 && y == 320) {
+        if (!tentarEntrarRegiao(regiaoCritica45)) return;
+    }
+    if (x == 240 && y == 320) {
+        sairRegiao(regiaoCritica45);
+    }
 
+    // Região Crítica 56
+    if (x == 340 && y == 320) {
+        if (!regiaoDisponivel(regiaoCritica56)) return;
+    }
+    if (x == 360 && y == 320) {
+        entrarRegiao(regiaoCritica56);
+    }
+    if (x == 340 && y == 420) {
+        sairRegiao(regiaoCritica56);
+    }
+
+    // Região Crítica 54
+    if (x == 320 && y == 320) {
+        if (!regiaoDisponivel(regiaoCritica54)) return;
+        entrarRegiao(regiaoCritica54);
+    }
+    if (x == 360 && y == 320) {
+        sairRegiao(regiaoCritica54);
+    }
+
+    // Movimento padrão
+    if (y == 320 && x < 360) {
+        x += 10;
+    } else if (x == 360 && y < 420) {
+        y += 10;
+    } else if (y == 420 && x > 160) {
+        x -= 10;
+    } else {
+        y -= 10;
+    }
+}
+
+// ============================================================
+// MOVIMENTAÇÃO DO TREM 6
+// ============================================================
+void Trem::movimentarTrem6()
+{
+    // Região Crítica 56
+    if (x == 380 && y == 420) {
+        if (!regiaoDisponivel(regiaoCritica56)) return;
+        entrarRegiao(regiaoCritica56);
+    }
+    if (x == 380 && y == 320) {
+        sairRegiao(regiaoCritica56);
+    }
+
+    // Região Crítica 46
+    if (x == 480 && y == 320) {
+        if (!regiaoDisponivel(regiaoCritica46)) return;
+        entrarRegiao(regiaoCritica46);
+    }
+    if (x == 520 && y == 320) {
+        sairRegiao(regiaoCritica46);
+    }
+
+    // Movimento padrão
+    if (y == 320 && x < 560) {
+        x += 10;
+    } else if (x == 560 && y < 420) {
+        y += 10;
+    } else if (y == 420 && x > 360) {
+        x -= 10;
+    } else {
+        y -= 10;
+    }
+}
+
+// ============================================================
+// LOOP PRINCIPAL DE EXECUÇÃO
+// ============================================================
 void Trem::run()
 {
     while (true) {
@@ -352,7 +441,6 @@ void Trem::run()
             }
         }
 
-        this_thread::sleep_for(chrono::milliseconds(velocidade));
+        std::this_thread::sleep_for(std::chrono::milliseconds(velocidade));
     }
 }
-

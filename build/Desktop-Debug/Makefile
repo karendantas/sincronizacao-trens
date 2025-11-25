@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../../../CodigoInicial -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I../../../sincronizacao-trens -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -37,10 +37,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = TrabalhoTrem1.0.0
-DISTDIR = /home/karen/Downloads/CodigoInicial/build/Desktop-Debug/.tmp/TrabalhoTrem1.0.0
+DISTDIR = /home/karen/Documentos/sincronizacao-trens/build/Desktop-Debug/.tmp/TrabalhoTrem1.0.0
 LINK          = g++
 LFLAGS        = 
-LIBS          = $(SUBLIBS) -pthread /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
+LIBS          = $(SUBLIBS) -pthread /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -52,14 +52,22 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../../main.cpp \
+SOURCES       = ../../client.cpp \
+		../../clientwindow.cpp \
+		../../controllersocketmain.cpp \
 		../../mainwindow.cpp \
 		../../trem.cpp moc_mainwindow.cpp \
+		moc_clientwindow.cpp \
+		moc_controllersocketmain.cpp \
 		moc_trem.cpp
-OBJECTS       = main.o \
+OBJECTS       = client.o \
+		clientwindow.o \
+		controllersocketmain.o \
 		mainwindow.o \
 		trem.o \
 		moc_mainwindow.o \
+		moc_clientwindow.o \
+		moc_controllersocketmain.o \
 		moc_trem.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -140,7 +148,11 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
 		../../../../TrabalhoTrem.pro ../../mainwindow.h \
-		../../trem.h ../../main.cpp \
+		../../clientwindow.h \
+		../../controllersocketmain.h \
+		../../trem.h ../../client.cpp \
+		../../clientwindow.cpp \
+		../../controllersocketmain.cpp \
 		../../mainwindow.cpp \
 		../../trem.cpp
 QMAKE_TARGET  = TrabalhoTrem
@@ -151,7 +163,7 @@ TARGET        = TrabalhoTrem
 first: all
 ####### Build rules
 
-TrabalhoTrem: ui_mainwindow.h $(OBJECTS)  
+TrabalhoTrem: ui_mainwindow.h ui_clientwindow.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../../TrabalhoTrem.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -328,9 +340,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../mainwindow.h ../../trem.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../main.cpp ../../mainwindow.cpp ../../trem.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../mainwindow.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../../mainwindow.h ../../clientwindow.h ../../controllersocketmain.h ../../trem.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../client.cpp ../../clientwindow.cpp ../../controllersocketmain.cpp ../../mainwindow.cpp ../../trem.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../mainwindow.ui ../../clientwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -362,30 +374,45 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_trem.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_clientwindow.cpp moc_controllersocketmain.cpp moc_trem.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_trem.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_clientwindow.cpp moc_controllersocketmain.cpp moc_trem.cpp
 moc_mainwindow.cpp: ../../mainwindow.h \
 		../../trem.h \
+		../../controllersocketmain.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/karen/Downloads/CodigoInicial/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/karen/Downloads/CodigoInicial -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/karen/Documentos/sincronizacao-trens/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/karen/Documentos/sincronizacao-trens -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../mainwindow.h -o moc_mainwindow.cpp
+
+moc_clientwindow.cpp: ../../clientwindow.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/karen/Documentos/sincronizacao-trens/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/karen/Documentos/sincronizacao-trens -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../clientwindow.h -o moc_clientwindow.cpp
+
+moc_controllersocketmain.cpp: ../../controllersocketmain.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/karen/Documentos/sincronizacao-trens/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/karen/Documentos/sincronizacao-trens -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../controllersocketmain.h -o moc_controllersocketmain.cpp
 
 moc_trem.cpp: ../../trem.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/karen/Downloads/CodigoInicial/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/karen/Downloads/CodigoInicial -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../trem.h -o moc_trem.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/karen/Documentos/sincronizacao-trens/build/Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/karen/Documentos/sincronizacao-trens -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/gcc/x86_64-linux-gnu/13/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../../trem.h -o moc_trem.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_mainwindow.h
+compiler_uic_make_all: ui_mainwindow.h ui_clientwindow.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_mainwindow.h
+	-$(DEL_FILE) ui_mainwindow.h ui_clientwindow.h
 ui_mainwindow.h: ../../mainwindow.ui \
 		/usr/lib/qt5/bin/uic
 	/usr/lib/qt5/bin/uic ../../mainwindow.ui -o ui_mainwindow.h
+
+ui_clientwindow.h: ../../clientwindow.ui \
+		/usr/lib/qt5/bin/uic
+	/usr/lib/qt5/bin/uic ../../clientwindow.ui -o ui_clientwindow.h
 
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
@@ -397,12 +424,22 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
-main.o: ../../main.cpp ../../mainwindow.h \
-		../../trem.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../../main.cpp
+client.o: ../../client.cpp ../../clientwindow.h \
+		../../mainwindow.h \
+		../../trem.h \
+		../../controllersocketmain.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o client.o ../../client.cpp
+
+clientwindow.o: ../../clientwindow.cpp ../../clientwindow.h \
+		ui_clientwindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clientwindow.o ../../clientwindow.cpp
+
+controllersocketmain.o: ../../controllersocketmain.cpp ../../controllersocketmain.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o controllersocketmain.o ../../controllersocketmain.cpp
 
 mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		../../trem.h \
+		../../controllersocketmain.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../../mainwindow.cpp
 
@@ -411,6 +448,12 @@ trem.o: ../../trem.cpp ../../trem.h
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_clientwindow.o: moc_clientwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_clientwindow.o moc_clientwindow.cpp
+
+moc_controllersocketmain.o: moc_controllersocketmain.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_controllersocketmain.o moc_controllersocketmain.cpp
 
 moc_trem.o: moc_trem.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_trem.o moc_trem.cpp

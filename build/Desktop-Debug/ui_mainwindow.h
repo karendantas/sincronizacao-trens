@@ -55,7 +55,7 @@ public:
 "border: 2px solid black;"));
         labelTrem01 = new QLabel(centralWidget);
         labelTrem01->setObjectName(QString::fromUtf8("labelTrem01"));
-        labelTrem01->setGeometry(QRect(250, 120, 20, 20));
+        labelTrem01->setGeometry(QRect(220, 120, 20, 20));
         labelTrem01->setStyleSheet(QString::fromUtf8("background-color: red;"));
         labelTrilho02 = new QLabel(centralWidget);
         labelTrilho02->setObjectName(QString::fromUtf8("labelTrilho02"));
@@ -64,11 +64,11 @@ public:
 "border: 2px solid black;"));
         labelTrem02 = new QLabel(centralWidget);
         labelTrem02->setObjectName(QString::fromUtf8("labelTrem02"));
-        labelTrem02->setGeometry(QRect(330, 120, 20, 20));
+        labelTrem02->setGeometry(QRect(360, 120, 20, 20));
         labelTrem02->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrem03 = new QLabel(centralWidget);
         labelTrem03->setObjectName(QString::fromUtf8("labelTrem03"));
-        labelTrem03->setGeometry(QRect(540, 220, 20, 20));
+        labelTrem03->setGeometry(QRect(500, 120, 20, 20));
         labelTrem03->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrilho03 = new QLabel(centralWidget);
         labelTrilho03->setObjectName(QString::fromUtf8("labelTrilho03"));
@@ -77,7 +77,7 @@ public:
 "border: 2px solid black;"));
         labelTrem04 = new QLabel(centralWidget);
         labelTrem04->setObjectName(QString::fromUtf8("labelTrem04"));
-        labelTrem04->setGeometry(QRect(220, 260, 20, 20));
+        labelTrem04->setGeometry(QRect(220, 270, 20, 20));
         labelTrem04->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrilho04 = new QLabel(centralWidget);
         labelTrilho04->setObjectName(QString::fromUtf8("labelTrilho04"));
@@ -86,7 +86,7 @@ public:
 "border: 2px solid black;"));
         labelTrem05 = new QLabel(centralWidget);
         labelTrem05->setObjectName(QString::fromUtf8("labelTrem05"));
-        labelTrem05->setGeometry(QRect(160, 320, 20, 20));
+        labelTrem05->setGeometry(QRect(260, 420, 20, 20));
         labelTrem05->setStyleSheet(QString::fromUtf8("background-color: red"));
         labelTrilho05 = new QLabel(centralWidget);
         labelTrilho05->setObjectName(QString::fromUtf8("labelTrilho05"));

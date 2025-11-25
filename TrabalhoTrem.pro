@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,14 +12,20 @@ TARGET = TrabalhoTrem
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
+SOURCES +=\
+    client.cpp \
+    clientwindow.cpp \
+    controllersocketmain.cpp \
         mainwindow.cpp \
     trem.cpp
 
 HEADERS  += mainwindow.h \
+    clientwindow.h \
+    controllersocketmain.h \
     trem.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    clientwindow.ui
 
 CONFIG  += c++11
 LIBS += -pthread
